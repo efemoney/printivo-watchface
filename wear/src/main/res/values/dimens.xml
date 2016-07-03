@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="ampmText">12sp</dimen>
+    <dimen name="timeText">32sp</dimen>
+    <dimen name="logoText">24sp</dimen>
+
+    <dimen name="decor_offset_x_circle">18dp</dimen>
+    <dimen name="decor_offset_y_circle">12dp</dimen>
+
+    <dimen name="decor_max">30dp</dimen>
+
+    <dimen name="decor_2_round">27dp</dimen>
+    <dimen name="decor_2">25dp</dimen>
+
+    <dimen name="decor_3_round">22dp</dimen>
+    <dimen name="decor_3">20dp</dimen>
+
+    <dimen name="decor_4_round">18dp</dimen>
+    <dimen name="decor_4">15dp</dimen>
+
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_36">36dp</dimen>
+    <dimen name="dp_50">50dp</dimen>
+    <dimen name="dp_86">86dp</dimen>
+
+</resources>

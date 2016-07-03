@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+
+    <color name="alt">#857B80</color>
+    <color name="base">#373335</color>
+    <color name="yellow">#FEF039</color>
+    <color name="pink">#E92D8F</color>
+    <color name="blue">#1DB0EC</color>
+
+    <color name="amP">#292627</color>
+    <color name="amI">#999999</color>
+
+</resources>
