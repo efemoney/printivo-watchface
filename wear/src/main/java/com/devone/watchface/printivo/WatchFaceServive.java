@@ -158,7 +158,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
         private Paint debugPaint;
         private float[] debugLines;
-        private boolean DEBUG = true;
+        private boolean DEBUG = false;
 
 
         @Override
@@ -235,7 +235,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
             timeOffsetY = dateOffsetY + dateHeight + width / 40;
 
             fm = timePaint.getFontMetrics();
-            float timeHeight = fm.descent - fm.top;
+            float timeHeight = - fm.top;
             logoOffsetY = timeOffsetY + timeHeight;
         }
 
@@ -482,7 +482,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
             // The y offset represents the top so we offset the offset back to the baseline
             Paint.FontMetrics fm = datePaint.getFontMetrics();
-            canvas.drawText(date, dateOffsetX, dateOffsetY + -(fm.ascent + fm.leading), datePaint);
+            canvas.drawText(date, dateOffsetX, dateOffsetY + -fm.top, datePaint);
         }
 
         private void drawTime(Canvas canvas) {
@@ -531,7 +531,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
             String logo = "printivo";
 
             Paint.FontMetrics fm = logoPaint.getFontMetrics();
-            canvas.drawText(logo, logoOffsetX, logoOffsetY + -(fm.ascent + fm.leading), logoPaint);
+            canvas.drawText(logo, logoOffsetX, logoOffsetY + -fm.ascent, logoPaint);
         }
 
         private void drawDecor(Canvas canvas) {
