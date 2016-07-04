@@ -37,7 +37,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 import android.widget.Toast;
@@ -50,6 +49,12 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+
+import static android.support.wearable.watchface.WatchFaceStyle.PEEK_OPACITY_MODE_OPAQUE;
+import static android.support.wearable.watchface.WatchFaceStyle.PROTECT_HOTWORD_INDICATOR;
+import static android.support.wearable.watchface.WatchFaceStyle.PROTECT_STATUS_BAR;
+import static android.view.Gravity.CENTER_HORIZONTAL;
+import static android.view.Gravity.TOP;
 
 /**
  * Digital watch face with seconds. In ambient mode, the seconds aren't displayed. On devices with
@@ -169,13 +174,13 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
                     .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
 
-                    .setHotwordIndicatorGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL)
+                    .setHotwordIndicatorGravity(TOP | CENTER_HORIZONTAL)
 
-                    .setStatusBarGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL)
+                    .setStatusBarGravity(TOP | CENTER_HORIZONTAL)
 
-                    .setPeekOpacityMode(WatchFaceStyle.PEEK_OPACITY_MODE_OPAQUE)
+                    .setPeekOpacityMode(PEEK_OPACITY_MODE_OPAQUE)
 
-                    .setViewProtectionMode(WatchFaceStyle.PROTECT_WHOLE_SCREEN)
+                    .setViewProtectionMode(PROTECT_STATUS_BAR | PROTECT_HOTWORD_INDICATOR)
 
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_SHORT)
 
