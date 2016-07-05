@@ -231,9 +231,9 @@ public class WatchFaceServive extends CanvasWatchFaceService {
         }
 
         private void calculateOffsets() {
-            dateOffsetX = width / 8;
+            dateOffsetX = width / 10;// 8
             timeOffsetX = width / 12;
-            logoOffsetX = width / 8;
+            logoOffsetX = width / 10;// 8
 
             dateOffsetY = height / 4;
 

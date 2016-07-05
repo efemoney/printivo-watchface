@@ -1,11 +1,9 @@
 package com.devone.watchface.printivo.typeface;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.support.annotation.ColorInt;
 import android.text.style.ReplacementSpan;
 
 /**
@@ -15,13 +13,11 @@ public class PrintivoLogoSpan extends ReplacementSpan {
 
     private static final String template = "i";
 
-    @ColorInt private int base;
-    @ColorInt private int yellow;
-    @ColorInt private int pink;
-    @ColorInt private int blue;
+    private int[] colors = new int[4];
 
     private float height;
     private float width;
+
     private int widthTotal;
     private int heightTotal;
 
@@ -29,10 +25,7 @@ public class PrintivoLogoSpan extends ReplacementSpan {
 
     public PrintivoLogoSpan(int base, int yellow, int pink, int blue) {
 
-        this.base = base;
-        this.yellow = yellow;
-        this.pink = pink;
-        this.blue = blue;
+        colors = new int[]{base, yellow, pink, blue};
 
         colorPaint = new Paint();
         colorPaint.setAntiAlias(true);
@@ -49,7 +42,7 @@ public class PrintivoLogoSpan extends ReplacementSpan {
 
         paint.getTextBounds("i", 0, 1, rect);
         width = rect.width();
-
+        heightTotal = rect.height();
 
         widthTotal = (int) paint.measureText(template);
 
@@ -63,16 +56,40 @@ public class PrintivoLogoSpan extends ReplacementSpan {
                      int y, int bottom,
                      Paint paint) {
 
-        // In java primitives are copied to method params so changing x, top etc
-        // here doesnt change the value for the caller of this method
+        RectF rectf = new RectF();
+
+        // Reducing width slightly (-1) because it looks better
+        // Comment this decrement to see the difference
+        width--;
 
         float dx = (widthTotal - width) / 2f;
+        float dy = height / 4;
 
-        colorPaint.setColor(Color.RED);
+        float l, t, r, b, cx, cy;
 
-        RectF rectf = new RectF(x + dx, y, x + width, y - height);
+        // In java primitives are copied to method params so changing x, top etc
+        // here doesnt change the value for the caller of this method
+        x += dx;
 
-        canvas.drawRect(rectf, colorPaint);
+        for (int i = 0; i < colors.length; i++) {
+
+            colorPaint.setColor(colors[i]);
+
+            l = x;
+            t = y - dy * (i + 1);
+            r = x + width;
+            b = y - dy * i;
+
+            rectf.set(l, t, r, b);
+
+            canvas.drawRect(rectf, colorPaint);
+        }
+
+        cx = x + width / 2;
+        cy = y - heightTotal + width/2;
+
+        colorPaint.setColor(colors[0]);
+        canvas.drawCircle(cx, cy, width/2, colorPaint);
     }
 
 }
