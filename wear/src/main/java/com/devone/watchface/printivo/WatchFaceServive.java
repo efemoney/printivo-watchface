@@ -33,16 +33,19 @@ import android.support.v4.content.ContextCompat;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.text.Layout;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.text.style.ForegroundColorSpan;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 import android.widget.Toast;
 
 import com.devone.watchface.printivo.typeface.AMPMSpan;
 import com.devone.watchface.printivo.typeface.Font;
+import com.devone.watchface.printivo.typeface.PrintivoLogoSpan;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
@@ -122,6 +125,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
             }
         };
 
+        String logo = "printivo";
 
         Calendar calendar;
 
@@ -154,7 +158,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
         float decorRadius4;
 
         @ColorInt int alt;
-        @ColorInt int amI;
+        @ColorInt int ambientI;
         @ColorInt int amP;
         @ColorInt int base;
         @ColorInt int yellow;
@@ -182,7 +186,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
                     .setViewProtectionMode(PROTECT_STATUS_BAR | PROTECT_HOTWORD_INDICATOR)
 
-                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_SHORT)
+                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_NONE)
 
                     .setShowSystemUiTime(false)
 
@@ -217,7 +221,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
         }
 
         private void retrieveColors() {
-            amI = ContextCompat.getColor(WatchFaceServive.this, R.color.amI);
+            ambientI = ContextCompat.getColor(WatchFaceServive.this, R.color.amI);
             amP = ContextCompat.getColor(WatchFaceServive.this, R.color.amP);
             alt = ContextCompat.getColor(WatchFaceServive.this, R.color.alt);
             base = ContextCompat.getColor(WatchFaceServive.this, R.color.base);
@@ -228,7 +232,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
         private void calculateOffsets() {
             dateOffsetX = width / 8;
-            timeOffsetX = width / 10;
+            timeOffsetX = width / 12;
             logoOffsetX = width / 8;
 
             dateOffsetY = height / 4;
@@ -455,17 +459,17 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
         private void debugDrawLines(Canvas canvas) {
 
-            float val = datePaint.getFontSpacing();
+            float val = -datePaint.getFontMetrics().top;
 
             canvas.drawLine(0, dateOffsetY, width, dateOffsetY, debugPaint);
             canvas.drawLine(0, dateOffsetY + val, width, dateOffsetY + val, debugPaint);
 
-            val = timePaint.getFontSpacing();
+            val = -timePaint.getFontMetrics().top;
 
             canvas.drawLine(0, timeOffsetY, width, timeOffsetY, debugPaint);
             canvas.drawLine(0, timeOffsetY + val, width, timeOffsetY + val, debugPaint);
 
-            val = logoPaint.getFontSpacing();
+            val = -logoPaint.getFontMetrics().top;
 
             canvas.drawLine(0, logoOffsetY, width, logoOffsetY, debugPaint);
             canvas.drawLine(0, logoOffsetY + val, width, logoOffsetY + val , debugPaint);
@@ -494,6 +498,20 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
             timePaint.setColor(mAmbient ? Color.WHITE : alt);
 
+            CharSequence text = buildSpannedTime();
+
+            canvas.save();
+            canvas.translate(timeOffsetX, timeOffsetY);
+
+            StaticLayout layout = getStaticLayout(timePaint, canvas.getWidth(), text);
+
+            layout.draw(canvas);
+            canvas.restore();
+
+        }
+
+        private CharSequence buildSpannedTime() {
+
             Locale def = Locale.getDefault();
 
             // Draw
@@ -515,28 +533,42 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
             Typeface typeface = Font.get(WatchFaceServive.this, REGULAR);
 
-            canvas.save();
-
-            Paint.FontMetrics fm = timePaint.getFontMetrics();
-            canvas.translate(timeOffsetX, timeOffsetY);
-
             SpannableStringBuilder text = new SpannableStringBuilder(time);
             text.append(ampm, new AMPMSpan(typeface, ampmTextSize), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            StaticLayout layout = getStaticLayout(canvas.getWidth(), text);
-
-            layout.draw(canvas);
-            canvas.restore();
-
+            return text;
         }
 
         private void drawLogo(Canvas canvas) {
 
             logoPaint.setColor(mAmbient ? amP : base);
-            String logo = "printivo";
 
+            CharSequence text = buildSpannedLogo();
+
+            canvas.save();
+
+            // Offset the y offset of the logo the top of the
             Paint.FontMetrics fm = logoPaint.getFontMetrics();
-            canvas.drawText(logo, logoOffsetX, logoOffsetY + -fm.ascent, logoPaint);
+            canvas.translate(logoOffsetX, logoOffsetY); // + (fm.top - fm.ascent));
+
+            StaticLayout layout = getStaticLayout(logoPaint, canvas.getWidth(), text);
+
+            layout.draw(canvas);
+            canvas.restore();
+
+            // Paint.FontMetrics fm = logoPaint.getFontMetrics();
+            // canvas.drawText(logo, logoOffsetX, logoOffsetY + -fm.ascent, logoPaint);
+        }
+
+        private CharSequence buildSpannedLogo() {
+
+            Object span = mAmbient ? new ForegroundColorSpan(ambientI)
+                    : new PrintivoLogoSpan(base, yellow, pink, blue);
+
+            SpannableString text = new SpannableString(logo);
+            text.setSpan(span, 5, 6, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            return text;
         }
 
         private void drawDecor(Canvas canvas) {
@@ -553,11 +585,11 @@ public class WatchFaceServive extends CanvasWatchFaceService {
             canvas.drawCircle(decorCentreX, decorCentreY, decorRadius4, decorPaint);
         }
 
-        private StaticLayout getStaticLayout(int canvasWidth, CharSequence text) {
+        private StaticLayout getStaticLayout(TextPaint paint, int canvasWidth, CharSequence text) {
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 
-                return StaticLayout.Builder.obtain(text, 0, text.length(), timePaint, canvasWidth)
+                return StaticLayout.Builder.obtain(text, 0, text.length(), paint, canvasWidth)
                         .setAlignment(Layout.Alignment.ALIGN_NORMAL)
                         .setLineSpacing(0f, 1f)
                         .setIncludePad(false)
@@ -566,7 +598,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
             } else {
 
-                return new StaticLayout(text, timePaint,
+                return new StaticLayout(text, paint,
                         canvasWidth, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
             }
         }
