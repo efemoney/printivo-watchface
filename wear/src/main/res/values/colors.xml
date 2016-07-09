@@ -9,7 +9,9 @@
     <color name="pink">#E92D8F</color>
     <color name="blue">#1DB0EC</color>
 
-    <color name="amP">#292627</color>
-    <color name="amI">#999999</color>
+    <!--<color name="amP">#292627</color>-->
+    <!--<color name="amI">#999999</color>-->
+    <color name="amP">#808080</color>
+    <color name="amI">#FFFFFF</color>
 
 </resources>
