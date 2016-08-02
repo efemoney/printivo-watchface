@@ -158,8 +158,8 @@ public class WatchFaceServive extends CanvasWatchFaceService {
         float decorRadius4;
 
         @ColorInt int alt;
+        @ColorInt int ambientP;
         @ColorInt int ambientI;
-        @ColorInt int amP;
         @ColorInt int base;
         @ColorInt int yellow;
         @ColorInt int pink;
@@ -222,7 +222,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
         private void retrieveColors() {
             ambientI = ContextCompat.getColor(WatchFaceServive.this, R.color.amI);
-            amP = ContextCompat.getColor(WatchFaceServive.this, R.color.amP);
+            ambientP = ContextCompat.getColor(WatchFaceServive.this, R.color.amP);
             alt = ContextCompat.getColor(WatchFaceServive.this, R.color.alt);
             base = ContextCompat.getColor(WatchFaceServive.this, R.color.base);
             yellow = ContextCompat.getColor(WatchFaceServive.this, R.color.yellow);
@@ -541,7 +541,7 @@ public class WatchFaceServive extends CanvasWatchFaceService {
 
         private void drawLogo(Canvas canvas) {
 
-            logoPaint.setColor(mAmbient ? amP : base);
+            logoPaint.setColor(mAmbient ? ambientP : base);
 
             CharSequence text = buildSpannedLogo();
 

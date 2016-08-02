@@ -11,17 +11,15 @@ import android.text.style.ReplacementSpan;
  */
 public class PrintivoLogoSpan extends ReplacementSpan {
 
-    private static final String template = "i";
-
     private int[] colors = new int[4];
 
-    private float height;
-    private float width;
+    private float xheight;
+    private float tightwidth;
 
-    private int widthTotal;
-    private int heightTotal;
+    private int totalwidth;
+    private int totalheight;
 
-    Paint colorPaint;
+    private Paint colorPaint;
 
     public PrintivoLogoSpan(int base, int yellow, int pink, int blue) {
 
@@ -37,47 +35,55 @@ public class PrintivoLogoSpan extends ReplacementSpan {
 
         Rect rect = new Rect();
 
-        paint.getTextBounds("o", 0, 1, rect);
-        height = rect.height();
+        String i = "i", o = "o";
 
-        paint.getTextBounds("i", 0, 1, rect);
-        width = rect.width();
-        heightTotal = rect.height();
+        paint.getTextBounds(o, 0, 1, rect);
+        xheight = rect.height();
 
-        widthTotal = (int) paint.measureText(template);
+        paint.getTextBounds(i, 0, 1, rect);
+        tightwidth = rect.width();
+        totalheight = rect.height();
 
-        return widthTotal;
+        totalwidth = (int) paint.measureText(i);
+
+        return totalwidth;
     }
 
     @Override
-    public void draw(Canvas canvas,
-                     CharSequence text, int start, int end,
-                     float x, int top,
-                     int y, int bottom,
-                     Paint paint) {
+    public void draw(Canvas canvas, CharSequence text, int start, int end,
+                     float x, int top, int y, int bottom, Paint paint) {
 
+        // TODO Make the drawing respect paints text Align setting
+
+        // should preallocate this rect and reuse for drawing
         RectF rectf = new RectF();
 
         // Reducing width slightly (-1) because it looks better
         // Comment this decrement to see the difference
-        width--;
+        tightwidth--;
 
-        float dx = (widthTotal - width) / 2f;
-        float dy = height / 4;
+        // (x, y) is initialized to the baseline left of the rect that the i glyph will draw in
+        // this includes dx which is the space on either side of the i glyph
+        float dx = (totalwidth - tightwidth) / 2f;
+        float dy = xheight / 4;
 
         float l, t, r, b, cx, cy;
 
-        // In java primitives are copied to method params so changing x, top etc
+
+        // so we offset x to the desired position
+        //
+        // In java primitives are <b>copied</b> to method params so changing x, top etc
         // here doesnt change the value for the caller of this method
         x += dx;
 
+        // draw the colors
         for (int i = 0; i < colors.length; i++) {
 
             colorPaint.setColor(colors[i]);
 
             l = x;
             t = y - dy * (i + 1);
-            r = x + width;
+            r = x + tightwidth;
             b = y - dy * i;
 
             rectf.set(l, t, r, b);
@@ -85,11 +91,12 @@ public class PrintivoLogoSpan extends ReplacementSpan {
             canvas.drawRect(rectf, colorPaint);
         }
 
-        cx = x + width / 2;
-        cy = y - heightTotal + width/2;
+        cx = x + tightwidth / 2;
+        cy = y - totalheight + tightwidth / 2;
 
+        // draw the dot
         colorPaint.setColor(colors[0]);
-        canvas.drawCircle(cx, cy, width/2, colorPaint);
+        canvas.drawCircle(cx, cy, tightwidth / 2, colorPaint);
     }
 
 }
